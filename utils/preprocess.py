@@ -22,6 +22,7 @@ def preliminary_preproc(dir):
     df.drop('State', axis=1, inplace=True)  # only one state is present - California
     df.drop('Lat Long', axis=1, inplace=True) # uninformative column
     df.drop('Zip Code', axis=1, inplace=True) # uninformative column - we discriminate by cities; no additional info provided about zipcodes
+    df.drop('Churn Score',axis=1, inplace=True) # removing a Churn Score proxy to prevent target leakage 
     df.drop('Churn Reason',axis=1, inplace=True) # removing a Churn Label proxy to prevent target leakage 
     df.drop('Churn Label', axis=1, inplace=True) # we have Churn Value already
     
@@ -41,19 +42,19 @@ def separate_data_shift_categories(df):
 
     # Tenure
 
-    df_collection['Tenure']['Short'] = df[df['Tenure Months'] <= 10].copy()
-    df_collection['Tenure']['Medium'] = df[(df['Tenure Months'] > 10) & (df['Tenure Months'] <= 30)].copy()
-    df_collection['Tenure']['Long'] = df[df['Tenure Months'] > 30].copy()
+    df_collection['Tenure']['Short'] = df[df['Tenure Months'] <= 12].copy()
+    df_collection['Tenure']['Medium'] = df[(df['Tenure Months'] > 12) & (df['Tenure Months'] <= 60)].copy()
+    df_collection['Tenure']['Long'] = df[df['Tenure Months'] > 60].copy()
 
     # City
 
-    top_10_city = df['City'].value_counts().head().index.tolist()
-    top_10_30_city = df['City'].value_counts().iloc[10:30].index.tolist()
-    top_30_and_above_city = df['City'].value_counts().iloc[30:].index.tolist()
+    top_3_city = df['City'].value_counts().head(3).index.tolist()
+    top_3_15_city = df['City'].value_counts().iloc[3:15].index.tolist()
+    top_15_and_above_city = df['City'].value_counts().iloc[15:].index.tolist()
 
-    df_collection['City']['Top_10'] = df[df['City'].isin(top_10_city)].copy()
-    df_collection['City']['Top_10_to_30'] = df[df['City'].isin(top_10_30_city)].copy()
-    df_collection['City']['Top_30_and_above'] = df[df['City'].isin(top_30_and_above_city)].copy()
+    df_collection['City']['Top_3'] = df[df['City'].isin(top_3_city)].copy()
+    df_collection['City']['Top_3_to_15'] = df[df['City'].isin(top_3_15_city)].copy()
+    df_collection['City']['Top_15_and_above'] = df[df['City'].isin(top_15_and_above_city)].copy()
 
     # Family Status
 
@@ -71,8 +72,7 @@ def separate_data_shift_categories(df):
 
     return df_collection
 
-def preprocess_shift_categories_da(df_sc, test_cat = ['Short'], split_criteria = ['Tenure Months'], 
-                        blacklist = ['Short', 'Medium', 'Long', 'Total Charges', 'Tenure Months']):
+def preprocess_shift_categories_da(df_sc, test_cat = ['Short'], blacklist = ['Short', 'Medium', 'Long', 'Total Charges', 'Tenure Months']):
     """ 
     Docstring for preprocess_shift_categories
     
@@ -82,7 +82,7 @@ def preprocess_shift_categories_da(df_sc, test_cat = ['Short'], split_criteria =
     :param blacklist: a list of features to be excluded 
     """
 
-    all_features = [col for col in list(df_sc[test_cat[0]].columns) if col not in split_criteria + ['Churn Value'] + blacklist]
+    all_features = [col for col in list(df_sc[test_cat[0]].columns) if col not in ['Churn Value'] + blacklist]
 
     # Numbers vs Strings
     numeric_features = df_sc[test_cat[0]][all_features].select_dtypes(include=['number']).columns.tolist()
