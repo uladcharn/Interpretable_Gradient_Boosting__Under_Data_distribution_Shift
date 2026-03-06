@@ -26,7 +26,7 @@ To ensure reproducibility and avoid dependency conflicts (especially with the sp
    conda activate interpret_gb
    ```
 
-Reproducing the experiments requires ```bash pip-```installing the following library packages:
+Reproducing the experiments requires ```pip-```installing the following library packages:
 
 ```
 ```text
