@@ -9,8 +9,6 @@ from sklearn.metrics import classification_report, confusion_matrix, roc_auc_sco
 import xgboost as xgb
 import lightgbm as lgb
 
-import shap
-
 class BaseModel(ABC):
     """Abstract Base Class to ensure consistency across models."""
     def __init__(self, model_name):
