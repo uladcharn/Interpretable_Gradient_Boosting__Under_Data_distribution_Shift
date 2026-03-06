@@ -29,7 +29,6 @@ To ensure reproducibility and avoid dependency conflicts (especially with the sp
 Reproducing the experiments requires ```pip-```installing the following library packages:
 
 ```
-```text
 numpy>=1.24.0
 pandas>=2.0.0
 scikit-learn>=1.2.0
