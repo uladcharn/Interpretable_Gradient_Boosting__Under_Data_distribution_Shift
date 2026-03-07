@@ -26,7 +26,7 @@ class BaseModel(ABC):
         
         print(f"--- {self.model_name} Evaluation ---")
         print(classification_report(y_test, preds))
-        return roc_auc_score(y_test, probs)
+        return roc_auc_score(y_test, probs), preds, probs
 
     def performance_diagnostics(self, X_test, y_test):
         """Visual diagnostics for distribution and subpopulation analysis."""
